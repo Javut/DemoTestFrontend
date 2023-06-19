@@ -1,8 +1,8 @@
 .container {
   display: grid;
   grid-template-areas:
-    "header"
-    "content";
+    'header'
+    'content';
   grid-template-rows: auto 1fr;
   height: 100vh;
 }
@@ -51,10 +51,11 @@ header {
   gap: 10px;
 }
 
-.store-content h2{
+.store-content h2 {
   color: rgb(44, 44, 204);
   text-align: left;
   padding-left: 20px;
+  font-size: 18px;
 }
 
 .cards-container {
@@ -80,8 +81,6 @@ header {
 .card.selected img {
   border: 1px solid blue;
 }
-
-
 
 @media (max-width: 375px) {
   .card {
@@ -110,6 +109,7 @@ header {
 .product-details h2 {
   color: blue;
   text-align: left;
+  font-size: 18px;
 }
 
 @media (max-width: 375px) {
@@ -151,7 +151,7 @@ body {
   padding: 0;
 }
 
-.display-product-selected{
+.display-product-selected {
   display: flex;
   margin-left: 8%;
 }
@@ -163,65 +163,65 @@ body {
   padding-bottom: 3px;
   padding-right: 3px;
   margin-top: 5px;
-  margin-right: 50px;
-  width: 30px;
-  height: 30px;
+  margin-right: 10px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
   background-color: rgb(96, 96, 245);
-  font-size: 20px;
-
-
+  font-size: 16px;
 }
 
-
-.content-product img{
+.content-product img {
   width: 50%;
   height: 200px;
 }
 
-.content-product h2{
+.content-product h2 {
   color: rgb(179, 178, 178);
   padding-left: 20px;
   text-align: left;
-  font-size: 20px;
+  font-size: 16px;
 }
 
-.content-product hr{
+.content-product hr {
   background-color: red;
 }
 
-.product-selected{
-   display: flex;
-   align-items: flex-end;
+.product-selected {
+  display: flex;
+  align-items: flex-end;
 }
 
-.product-selected > h3:nth-of-type(2){
+.product-selected > h3:nth-of-type(2) {
   color: blue;
-  font-size: 18px;
-  padding-right: 60%;
+  font-size: 16px;
+  padding-right: 50%;
   padding-left: 4%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.product-selected > div:first-of-type{
+.product-selected > div:first-of-type {
   color: white;
   height: 25px;
   width: 25px;
   margin-bottom: 10px;
   margin-right: 1%;
   background-color: rgb(151, 151, 151);
-  font-size: 20px;
+  font-size: 16px;
 }
 
-.product-selected > div:nth-of-type(2){
+.product-selected > div:nth-of-type(2) {
   color: white;
   height: 25px;
   width: 25px;
   margin-bottom: 10px;
   background-color: rgb(151, 151, 151);
-  font-size: 20px;
+  font-size: 16px;
 }
 
-.description{
+.description {
   color: gray;
   text-align: left;
 }

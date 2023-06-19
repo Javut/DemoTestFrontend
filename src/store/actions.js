@@ -1,21 +1,21 @@
-export const addProduct = (product) => ({
-    type: 'ADD_PRODUCT',
-    payload: product,
-});
-
-export const deleteProduct = (productId) => ({
-    type: 'DELETE_PRODUCT',
-    payload: productId,
-});
-
-export const emptyCar = () => ({
-    type: 'EMPTY_CAR',
+export const addToCart = (productToAdd) => ({
+  type: 'ADD_TO_CART',
+  payload: productToAdd,
 })
 
-export const updateProductAmount = (productId, quantity) => ({
-   type: 'UPDATE_PRODUCT_AMOUNT',
-   payload: {
+export const removeFromCart = (productId) => ({
+  type: 'REMOVE_FROM_CART',
+  payload: productId,
+})
+
+export const emptyCar = () => ({
+  type: 'EMPTY_CART',
+})
+
+export const updateQuantity = (productId, quantity) => ({
+  type: 'UPDATE_QUANTITY',
+  payload: {
     productId,
-    quantity
-   },
-});
+    quantity,
+  },
+})

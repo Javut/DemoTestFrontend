@@ -2,15 +2,20 @@ import React, { useState } from 'react'
 import '../../styles/homepage.css'
 import logo from '../utils/logo.png'
 import shopping from '../utils/shopping.png'
+import { useDispatch, useSelector } from 'react-redux'
+import { addToCart } from '../../store/actions'
 import { data } from '../../data'
 
 export const HomePage = () => {
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [selectedClass, setSelectedClass] = useState('')
-  const [counterProduct, setCounterProduct] = useState(0);
+  const [productData, setProductData] = useState(data)
+
+  const cart = useSelector((state) => state.cart.products)
+  const dispatch = useDispatch()
 
   const renderCards = () => {
-    return data.map((product) => (
+    return productData.map((product) => (
       <div
         className={`card ${
           selectedProduct === product.id ? selectedClass : ''
@@ -24,16 +29,45 @@ export const HomePage = () => {
   }
 
   const handleCardClick = (productId) => {
-    setSelectedProduct(productId)
-    setSelectedClass('selected')
-  }
+    if (selectedProduct === productId) {
+      // Si se hace clic en el producto seleccionado nuevamente, reinicia el contador
+      setSelectedProduct(null);
+      setSelectedClass('');
+    } else {
+      setSelectedProduct(productId);
+      setSelectedClass('selected');
+    }
+  };
 
   const handleAddProductClick = (quantity) => {
-    if(quantity>0){
-      setCounterProduct(counterProduct+1);
-      data[selectedProduct-1].quantity - 1
+    if (quantity > 0 && selectedProduct !== null) {
+      const selectedProductData = productData[selectedProduct - 1];
+      const { img, quantity: productQuantity, price, id } = selectedProductData;
+  
+      const selectedProductIndex = cart.findIndex((product) => product.id === id);
+      if (selectedProductIndex !== -1) {
+        const selectedQuantity = cart[selectedProductIndex].selectedQuantity;
+        const maxQuantity = productQuantity - selectedQuantity;
+        if (selectedQuantity < maxQuantity) {
+          const updatedCart = [...cart];
+          updatedCart[selectedProductIndex].selectedQuantity += 1;
+          dispatch(addToCart(updatedCart));
+        }
+      } else {
+        const productToAdd = {
+          img,
+          quantity: productQuantity,
+          price,
+          id,
+          selectedQuantity: 1,
+        };
+        dispatch(addToCart(productToAdd));
+      }
     }
-  }
+    console.log(cart);
+  };
+  
+  
 
   return (
     <div className="container">
@@ -43,7 +77,7 @@ export const HomePage = () => {
         </div>
         <div className="cart">
           <img src={shopping} alt="Carrito" />
-          <span className="cart-counter">3</span>
+          <p className="cart-counter">{cart?.length}</p>
         </div>
       </header>
 
@@ -73,23 +107,32 @@ export const HomePage = () => {
             {selectedProduct !== null ? (
               <>
                 <div className="display-product-selected">
-                  <div className="counter-product">{counterProduct}</div>
+                  <div className="counter-product">
+                    {cart.find((product) => product.id === selectedProduct)
+                      ?.selectedQuantity || 0}
+                  </div>
                   <img
-                    src={data[selectedProduct - 1].img}
+                    src={productData[selectedProduct - 1].img}
                     alt={`Card ${selectedProduct}`}
                   />
                 </div>
                 <div className="product-selected">
-                  <h3>{data[selectedProduct - 1].nameProduct}</h3>
-                  <h3>${data[selectedProduct - 1].price}</h3>
+                  <h3>{productData[selectedProduct - 1].nameProduct}</h3>
+                  <h3>${productData[selectedProduct - 1].price}</h3>
                   <div
-                   onClick={() => handleAddProductClick(data[selectedProduct-1].quantity)}
-                  >+</div>
+                    onClick={() =>
+                      handleAddProductClick(
+                        productData[selectedProduct - 1].quantity
+                      )
+                    }
+                  >
+                    +
+                  </div>
                   <div>-</div>
                 </div>
                 <hr style={{ margin: 1 }} />
                 <p className="description">
-                  {data[selectedProduct - 1].description}...
+                  {productData[selectedProduct - 1].description}...
                 </p>
                 <hr />
               </>
