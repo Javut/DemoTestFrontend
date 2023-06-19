@@ -171,32 +171,15 @@ export const HomePage = () => {
                   </>
                 )}
               </div>
-              <div>
-                {
-                  cart.map((product) => (
-                    <div>
-                      <div>{product.selectedQuantity}</div>
-                      <img src={product.img} alt={product.id}/>
-                      <hr/>
-                    </div>
-                  )) 
-                }
+              <div className="content-product">
+                {cart.map((product) => (
+                  <div className="display-product-selected">
+                    <div>{product.selectedQuantity}</div>
+                    <img src={product.img} alt={product.id} />
+                    <hr />
+                  </div>
+                ))}
               </div>
-
-
-              {/* const renderCards = () => {
-    return productData.map((product) => (
-      <div
-        className={`card ${
-          selectedProduct === product.id ? selectedClass : ''
-        }`}
-        key={product.id}
-        onClick={() => handleCardClick(product.id)}
-      >
-        <img src={product.img} alt={product.nameProduct} />
-      </div>
-    ))
-  } */}
 
               {/* <div className="content-product">
               {selectedProduct !== null ? (
