@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import '../../styles/homepage.css'
 import logo from '../utils/logo.png'
 import shopping from '../utils/shopping.png'
@@ -10,6 +10,7 @@ export const HomePage = () => {
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [selectedClass, setSelectedClass] = useState('')
   const [productData, setProductData] = useState(data)
+  const [renderCartProducts, setRenderCartProducts] = useState(false)
 
   const cart = useSelector((state) => state.cart.products)
   const dispatch = useDispatch()
@@ -31,27 +32,29 @@ export const HomePage = () => {
   const handleCardClick = (productId) => {
     if (selectedProduct === productId) {
       // Si se hace clic en el producto seleccionado nuevamente, reinicia el contador
-      setSelectedProduct(null);
-      setSelectedClass('');
+      setSelectedProduct(null)
+      setSelectedClass('')
     } else {
-      setSelectedProduct(productId);
-      setSelectedClass('selected');
+      setSelectedProduct(productId)
+      setSelectedClass('selected')
     }
-  };
+  }
 
   const handleAddProductClick = (quantity) => {
     if (quantity > 0 && selectedProduct !== null) {
-      const selectedProductData = productData[selectedProduct - 1];
-      const { img, quantity: productQuantity, price, id } = selectedProductData;
-  
-      const selectedProductIndex = cart.findIndex((product) => product.id === id);
+      const selectedProductData = productData[selectedProduct - 1]
+      const { img, quantity: productQuantity, price, id } = selectedProductData
+
+      const selectedProductIndex = cart.findIndex(
+        (product) => product.id === id
+      )
       if (selectedProductIndex !== -1) {
-        const selectedQuantity = cart[selectedProductIndex].selectedQuantity;
-        const maxQuantity = productQuantity - selectedQuantity;
+        const selectedQuantity = cart[selectedProductIndex].selectedQuantity
+        const maxQuantity = productQuantity - selectedQuantity
         if (selectedQuantity < maxQuantity) {
-          const updatedCart = [...cart];
-          updatedCart[selectedProductIndex].selectedQuantity += 1;
-          dispatch(addToCart(updatedCart));
+          const updatedCart = [...cart]
+          updatedCart[selectedProductIndex].selectedQuantity += 1
+          dispatch(addToCart(updatedCart))
         }
       } else {
         const productToAdd = {
@@ -60,14 +63,17 @@ export const HomePage = () => {
           price,
           id,
           selectedQuantity: 1,
-        };
-        dispatch(addToCart(productToAdd));
+        }
+        dispatch(addToCart(productToAdd))
       }
     }
-    console.log(cart);
-  };
-  
-  
+    console.log(cart)
+  }
+
+  const handleCartProducts = () => {
+    alert("It's Okay" + renderCartProducts)
+    setRenderCartProducts(true)
+  }
 
   return (
     <div className="container">
@@ -76,7 +82,13 @@ export const HomePage = () => {
           <img src={logo} alt="Logo" />
         </div>
         <div className="cart">
-          <img src={shopping} alt="Carrito" />
+          <img
+            src={shopping}
+            alt="Carrito"
+            onClick={() => {
+              handleCartProducts()
+            }}
+          />
           <p className="cart-counter">{cart?.length}</p>
         </div>
       </header>
@@ -89,57 +101,142 @@ export const HomePage = () => {
           </div>
           <div className="cards-container">{renderCards()}</div>
         </div>
-        <div className="product">
-          <div className="product-details">
-            {selectedProduct !== null ? (
-              <>
-                <h2>Product</h2>
-                <hr />
-              </>
-            ) : (
-              <>
-                <h2 style={{ visibility: 'hidden' }}>Product</h2>
-                <hr />
-              </>
-            )}
-          </div>
-          <div className="content-product">
-            {selectedProduct !== null ? (
-              <>
-                <div className="display-product-selected">
-                  <div className="counter-product">
-                    {cart.find((product) => product.id === selectedProduct)
-                      ?.selectedQuantity || 0}
+
+        <div>
+          {!renderCartProducts ? (
+            <div className="product">
+              <div className="product-details">
+                {selectedProduct !== null ? (
+                  <>
+                    <h2>Product</h2>
+                    <hr />
+                  </>
+                ) : (
+                  <>
+                    <h2 style={{ visibility: 'hidden' }}>Product</h2>
+                    <hr />
+                  </>
+                )}
+              </div>
+              <div className="content-product">
+                {selectedProduct !== null ? (
+                  <>
+                    <div className="display-product-selected">
+                      <div className="counter-product">
+                        {cart.find((product) => product.id === selectedProduct)
+                          ?.selectedQuantity || 0}
+                      </div>
+                      <img
+                        src={productData[selectedProduct - 1].img}
+                        alt={`Card ${selectedProduct}`}
+                      />
+                    </div>
+                    <div className="product-selected">
+                      <h3>{productData[selectedProduct - 1].nameProduct}</h3>
+                      <h3>${productData[selectedProduct - 1].price}</h3>
+                      <div
+                        onClick={() =>
+                          handleAddProductClick(
+                            productData[selectedProduct - 1].quantity
+                          )
+                        }
+                      >
+                        +
+                      </div>
+                      <div>-</div>
+                    </div>
+                    <hr style={{ margin: 1 }} />
+                    <p className="description">
+                      {productData[selectedProduct - 1].description}...
+                    </p>
+                    <hr />
+                  </>
+                ) : (
+                  <h2>Please choose a product on the left</h2>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="product">
+              <div className="product-details">
+                {selectedProduct !== null ? (
+                  <>
+                    <h2>Product</h2>
+                    <hr />
+                  </>
+                ) : (
+                  <>
+                    <h2 style={{ visibility: 'hidden' }}>Product</h2>
+                    <hr />
+                  </>
+                )}
+              </div>
+              <div>
+                {
+                  cart.map((product) => (
+                    <div>
+                      <div>{product.selectedQuantity}</div>
+                      <img src={product.img} alt={product.id}/>
+                      <hr/>
+                    </div>
+                  )) 
+                }
+              </div>
+
+
+              {/* const renderCards = () => {
+    return productData.map((product) => (
+      <div
+        className={`card ${
+          selectedProduct === product.id ? selectedClass : ''
+        }`}
+        key={product.id}
+        onClick={() => handleCardClick(product.id)}
+      >
+        <img src={product.img} alt={product.nameProduct} />
+      </div>
+    ))
+  } */}
+
+              {/* <div className="content-product">
+              {selectedProduct !== null ? (
+                <>
+                  <div className="display-product-selected">
+                    <div className="counter-product">
+                      {cart.find((product) => product.id === selectedProduct)
+                        ?.selectedQuantity || 0}
+                    </div>
+                    <img
+                      src={productData[selectedProduct - 1].img}
+                      alt={`Card ${selectedProduct}`}
+                    />
                   </div>
-                  <img
-                    src={productData[selectedProduct - 1].img}
-                    alt={`Card ${selectedProduct}`}
-                  />
-                </div>
-                <div className="product-selected">
-                  <h3>{productData[selectedProduct - 1].nameProduct}</h3>
-                  <h3>${productData[selectedProduct - 1].price}</h3>
-                  <div
-                    onClick={() =>
-                      handleAddProductClick(
-                        productData[selectedProduct - 1].quantity
-                      )
-                    }
-                  >
-                    +
+                  <div className="product-selected">
+                    <h3>{productData[selectedProduct - 1].nameProduct}</h3>
+                    <h3>${productData[selectedProduct - 1].price}</h3>
+                    <div
+                      onClick={() =>
+                        handleAddProductClick(
+                          productData[selectedProduct - 1].quantity
+                        )
+                      }
+                    >
+                      +
+                    </div>
+                    <div>-</div>
                   </div>
-                  <div>-</div>
-                </div>
-                <hr style={{ margin: 1 }} />
-                <p className="description">
-                  {productData[selectedProduct - 1].description}...
-                </p>
-                <hr />
-              </>
-            ) : (
-              <h2>Please choose a product on the left</h2>
-            )}
-          </div>
+                  <hr style={{ margin: 1 }} />
+                  <p className="description">
+                    {productData[selectedProduct - 1].description}...
+                  </p>
+                  <hr />
+                </>
+              ) : (
+                <h2>Please choose a product on the left</h2>
+              )}
+            </div> */}
+            </div>
+          )}
         </div>
       </section>
     </div>
